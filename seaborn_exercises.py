@@ -1,5 +1,5 @@
 #%%
-from env import host, user, password, get_db_url
+from env import host, user, password, get_db_url, clean_currency
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -54,8 +54,36 @@ data('InsectSprays', show_doc=True)
 #2
 sns.boxenplot(x='count', y='spray', data=insect)
 # %%
+#3
 swiss_db = data('swiss')
 swiss_db
 # %%
-is_catholic = 
+swiss_db['is_catholic'] = swiss_db.Catholic >= 70
+swiss_db
 # %%
+#r_cathloics_horny = swiss_db.groupby(['is_catholic', 'Fertility'])
+#r_cathloics_horny
+# %%
+#there is not a strong corralation between > 70 cathloic and fertility
+sns.relplot(x='is_catholic', y='Fertility', hue='Catholic', data=swiss_db)
+sns.relplot(x='is_catholic', y='Fertility', hue='Agriculture', data=swiss_db)
+
+# %%
+#there is a corralation between Agriculture and fertility
+# .corr = correlates 
+swiss_db.corr()
+# %%
+sns.pairplot(swiss_db.drop(columns='is_catholic'))
+# %%
+#4
+tasty_chipotle = pd.read_sql('SELECT * FROM orders', get_db_url('chipotle'))
+tasty_chipotle
+# %%
+tasty_chipotle['item_price'] = tasty_chipotle['item_price'].str.replace('$','',regex = False).str.replace(',','',regex = False).astype('float')
+# %%
+tasty_chipotle
+# %%
+very_tasty = tasty_chipotle.groupby('item_name').item_price.sum().sort_values(ascending = False).nlargest(4)
+tasty_chipotle 
+# %%
+sns.barplot(x='item_name', y='')
